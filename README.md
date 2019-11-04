@@ -1,7 +1,7 @@
 # chrome-rselenium
 ### Use Google Chrome from your R scripts using WebDriver for navigating to web pages, user input, JavaScript execution, and more. 
 
-## Linux
+## All OS (Linux/Windows/Mac)
 
 You can use selenium on Ubuntu with R by following this steps:
 
