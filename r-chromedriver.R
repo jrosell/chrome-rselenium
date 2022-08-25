@@ -1,22 +1,24 @@
-cran_packages <- c("devtools") 
-if (length(setdiff(cran_packages, rownames(installed.packages()))) > 0) {
-  install.packages(setdiff(cran_packages, rownames(installed.packages())), dependencies=TRUE, repos='http://cran.rstudio.com/')  
-}
-if(!require(binman)) devtools::install_github("ropensci/binman")
-if(!require(wdman)) devtools::install_github("ropensci/wdman")
-if(!require(RSelenium)) devtools::install_github("ropensci/RSelenium")
-library(binman)
-library(wdman)
-library(RSelenium)
-# Place chromedriver in your "User/Documents/R" folder
-cDrv <- chrome(version = '78.0.3904.70')
+start_url <- "https://elnostreraco.com/blog/"
+url_path <- "https://elnostreraco.com/blog/"
+gh_required <- c("ropensci/binman", "ropensci/wdman", "ropensci/RSelenium")
+pacman::p_load_gh(gh_required, install = FALSE) # If it fails, install.packages("pacman") and set install = TRUE
+pacman::p_load(tidyverse)
+# Adjust the proper chromedriver version according to your Google Chrome version (google-chrome --version)
+cDrv <- chrome(version = '104.0.5112.79')
 eCaps <- list(chromeOptions = list(args = c('--no-sandbox','--headless', '--disable-gpu', '--window-size=1280,800')))
-remDr<- remoteDriver(browserName = "chrome", port = 4567L, extraCapabilities = eCaps)
+remDr <- remoteDriver(browserName = "chrome", port = 4567L, extraCapabilities = eCaps)
 remDr$open()
-remDr$navigate("http://www.google.com/")
-webElem <- remDr$findElement(using = "css", "[name = 'q']")
-webElem$sendKeysToElement(list("ChromeDriver", key = "enter"))
-remDr$getCurrentUrl()
+remDr$navigate(start_url)
+webElems <- remDr$findElements(using = "css", "a")
+internal_urls <-
+  tibble(
+    href = c(start_url, unlist(map(webElems, function(x){x$getElementAttribute("href")}))),
+    n = 1
+  ) %>%
+  filter(str_detect(href, url_path)) %>%
+  mutate(href = str_replace(href, "#.*", "")) %>%
+  unique()
+internal_urls
 Sys.sleep(5)
 remDr$close()
 
