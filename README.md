@@ -2,7 +2,7 @@
 ### Use Google Chrome from your R scripts using WebDriver for navigating to web pages, user input, JavaScript execution, and more. 
 ## Examples
 
-### rselenium asa website crawler (newer example)
+### rselenium as a website crawler (newer example)
 
 You can crawl a website using selenium on Ubuntu (should work also in other Linux/Windows/Mac) with R by following this steps:
 
