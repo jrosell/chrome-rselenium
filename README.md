@@ -12,7 +12,7 @@ cd myproject
 
 2. Install Rstudio for R from https://rstudio.com/products/rstudio/
 
-3. Edit next_url, include_path, exclude_path and max_crawls, chrome_version, save_intermediate_results and sleep_sample as required.
+3. Edit crawler.R. Change next_url, include_path, exclude_path and max_crawls, chrome_version, save_intermediate_results and sleep_sample as required.
 
 4. Run it and check the results in the data folder.
 
