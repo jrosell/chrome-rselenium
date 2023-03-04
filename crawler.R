@@ -4,11 +4,11 @@
 # - Crawl using rSelenium.
 # - Get all links from the crawled page.
 # - Queque them if not already creawled
-# - Proess the quequie up to a limit of crawls.
+# - Process the queque up to the defined limit number of crawls.
 # - Save the results.
 # Pending:
 # - Use purrr safely or posible
-# - Read robots nofollow in order to control
+# - Read robots nofollow in order to control the crawling process.
 
 
 # Settings ----
@@ -19,7 +19,7 @@ exclude_path = "(error|--)"
 max_crawls <- 5000
 chrome_version <- '110.0.5481.77'
 save_intermediate_results <- FALSE
-sleep_sample <- sample(seq(0.01,0.2, 0.01), 1)
+sleep_sample <- sample(seq(0.01, 0.5, 0.01), 1)
 
 
 # Requirements  ----
@@ -28,9 +28,11 @@ rlang::check_required("tidyverse") # install.packages("tidyverse")
 rlang::check_required("RSelenium") # install.packages("RSelenium")
 rlang::check_required("wdman") # install.packages("wdman")
 rlang::check_required("rvest") # install.packages("rvest")
+rlang::check_required("xml2") # install.packages("xml2")
 library(tidyverse)
 library(RSelenium)
 library(rvest)
+library(xml2)
 
 
 # Execution ----
@@ -83,26 +85,25 @@ if (exists("cDrv")) { cDrv$stop() }
 
 
 # Results ----
-
 crawled %>% write_rds(here::here("data/crawled.rds"))
-
-parsed <- crawled %>%
-  mutate(parsed = map(source, page_parse)) %>%
-  unnest_wider(parsed)
-
+parsed <- crawl_parse(crawled)
 write_csv(parsed, "data/crawled_parsed.csv")
-
-parsed %>%
+read_csv("data/crawled_parsed.csv", show_col_types = FALSE) %>%
   glimpse()
+
+# Example ----
 
 # Rows: 12
 # Columns: 9
-# $ href         <chr> "https://jrosell.github.io/AdventOfCode/2022/01.html", "https://jros…
-# $ source       <list> "<html xmlns=\"http://www.w3.org/1999/xhtml\" lang=\"en\" xml:lang=…
-# $ title        <chr> " Day 1", " AdventOfCode R code", " Day 2", " Day 3", " Day 4", " Da…
-# $ meta         <chr> "", "Author: Jordi Rosell", "", "", "", "", "", "", "", "", "", ""
-# $ h1           <chr> "Day 1", "AdventOfCode", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6"…
-# $ h2           <chr> "Part 1: How many Calories are being carried by the Elf carrying the…
-# $ h3           <chr> "", "R code:", "", "", "", "", "", "", "", "", "", ""
-# $ h4           <chr> "", "Disclaimer", "", "", "", "", "", "", "", "", "", ""
-# $ main_content <chr> "", "Advent of Code is an Advent calendar of small programming puzzl…
+# $ href         <chr> "https://jrosell.github.io/AdventOfCode/2022/01.html", "https://jro…
+# $ lang         <chr> "en", "en", "en", "en", "en", "en", "en", "en", "en", "en", "en", "…
+# $ title        <chr> "Day 1", "AdventOfCode R code", "Day 2", "Day 3", "Day 4", "Day 5",…
+# $ meta         <chr> NA, "Author: Jordi Rosell", NA, NA, NA, NA, NA, NA, NA, NA, NA, NA
+# $ h1           <chr> "Day 1", "AdventOfCode", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6…
+# $ h2           <chr> "Part 1: How many Calories are being carried by the Elf carrying th…
+# $ h3           <chr> NA, "R code: All the code", NA, NA, NA, NA, NA, NA, NA, NA, NA, NA
+# $ h4           <chr> NA, "Disclaimer", NA, NA, NA, NA, NA, NA, NA, NA, NA, NA
+# $ main_content <chr> NA, "Advent of Code is an Advent calendar of small programming puzz…
+
+
+

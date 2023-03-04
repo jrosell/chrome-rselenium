@@ -20,9 +20,7 @@ clean_links_href <- function(df, url_path) {
 
 page_parse <- function(source, main_content_css = "h1 + *") {
   xml <- rvest::minimal_html(source)
-  lang <- xml %>%
-    html_nodes(xpath = '//html[@lang]') %>%
-    html_text()
+  lang <- source %>% str_extract(" lang=\"(.*)\"") %>% substr(8, 9)
   title <- xml %>%
     html_nodes(xpath = '//title') %>%
     html_text()
@@ -47,7 +45,7 @@ page_parse <- function(source, main_content_css = "h1 + *") {
   main_content  <-  xml %>%
     html_elements(css = main_content_css) %>%
     html_text()
-  list(
+  tibble(
     lang = paste(lang, collapse = " "),
     title = paste(title, collapse = " "),
     meta = paste(meta, collapse = " "),
@@ -56,11 +54,19 @@ page_parse <- function(source, main_content_css = "h1 + *") {
     h3 = paste(h3, collapse = " "),
     h4 = paste(h4, collapse = " "),
     main_content = paste(main_content, collapse = " ")
-  )
+  ) %>%
+  mutate(lang = na_if(lang, "NA"))
 }
 
 
 parse_links <- function(driver){
   linksElems <- driver$findElements(using = "css selector", "a")
   unlist(map(linksElems, function(x){x$getElementAttribute("href")}))
+}
+
+crawl_parse <- function(crawled) {
+  crawled %>%
+    mutate(parsed = map(source, page_parse)) %>%
+    unnest_wider(parsed) %>%
+    select(-source)
 }
