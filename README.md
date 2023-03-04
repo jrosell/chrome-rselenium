@@ -7,8 +7,11 @@
 You can crawl a website using selenium on Ubuntu (should work also in other Linux/Windows/Mac) with R by following this steps:
 
 1. Clone the project (change myproject to whatever your want)
+
+```
 git clone https://github.com/jrosell/chrome-rselenium myproject
 cd myproject
+```
 
 2. Install Rstudio for R from https://rstudio.com/products/rstudio/
 
@@ -22,8 +25,10 @@ cd myproject
 You can use selenium on Ubuntu (should work also in other Linux/Windows/Mac) with R by following this steps:
 
 1. Clone the project (change myproject to whatever your want)
+```
 git clone https://github.com/jrosell/chrome-rselenium myproject
 cd myproject
+````
 
 2. Install Rstudio for R from https://rstudio.com/products/rstudio/
 
