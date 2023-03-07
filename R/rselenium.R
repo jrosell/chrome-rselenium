@@ -1,21 +1,9 @@
 
-get_links_href <- function(url) {
-  eCaps <- list(chromeOptions = list(args = c('--no-sandbox','--headless', '--disable-gpu', '--window-size=1280,800')))
-  remDr <- remoteDriver(browserName = "chrome", port = 4567L, extraCapabilities = eCaps)
-  remDr$open()
-  remDr$navigate(url)
-  Sys.sleep(2)
-  webElems <- remDr$findElements(using = "css", "a")
-  links_href <- unlist(map(webElems, function(x){x$getElementAttribute("href")}))
-  remDr$close()
-  return(links_href)
-}
-
-clean_links_href <- function(df, url_path) {
-  df %>%
-    filter(str_detect(href, url_path)) %>%
-    mutate(href = str_replace(href, "#.*", "")) %>%
-    distinct(href, .keep_all = TRUE)
+extract_links <- function(driver) {
+  links_elems <- driver$findElements(using = "css selector", "a")
+  return(unlist(purrr::map(links_elems, function(x) {
+      x$getElementAttribute("href")
+  })))
 }
 
 page_parse <- function(source, main_content_css = "h1 + *") {
@@ -59,14 +47,29 @@ page_parse <- function(source, main_content_css = "h1 + *") {
 }
 
 
-parse_links <- function(driver){
-  linksElems <- driver$findElements(using = "css selector", "a")
-  unlist(map(linksElems, function(x){x$getElementAttribute("href")}))
-}
-
 crawl_parse <- function(crawled) {
   crawled %>%
     mutate(parsed = map(source, page_parse)) %>%
     unnest_wider(parsed) %>%
     select(-source)
+}
+
+
+clean_links_href <- function(df, url_path) {
+  df %>%
+    filter(str_detect(href, url_path)) %>%
+    mutate(href = str_replace(href, "#.*", "")) %>%
+    distinct(href, .keep_all = TRUE)
+}
+
+get_links_href <- function(url) {
+  eCaps <- list(chromeOptions = list(args = c('--no-sandbox','--headless', '--disable-gpu', '--window-size=1280,800')))
+  remDr <- remoteDriver(browserName = "chrome", port = 4567L, extraCapabilities = eCaps)
+  remDr$open()
+  remDr$navigate(url)
+  Sys.sleep(2)
+  webElems <- remDr$findElements(using = "css", "a")
+  links_href <- unlist(map(webElems, function(x){x$getElementAttribute("href")}))
+  remDr$close()
+  return(links_href)
 }
