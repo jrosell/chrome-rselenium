@@ -10,19 +10,8 @@
 # - Use purrr safely or posible
 # - Read robots nofollow in order to control the crawling process.
 
-
-# Settings ----
-
-next_url <- "https://jrosell.github.io/AdventOfCode/2022/01.html"
-include_path <- "https://jrosell.github.io/AdventOfCode/"
-exclude_path <- "(error|--)"
-max_crawls <- 5000
-chrome_version <- "110.0.5481.77"
-save_intermediate_results <- FALSE
-sleep_sample <- seq(0.01, 0.5, 0.01)
-
-
 # Requirements  ----
+
 rlang::check_installed("tidyverse") # install.packages("tidyverse")
 rlang::check_installed("RSelenium") # install.packages("RSelenium")
 rlang::check_installed("wdman") # install.packages("wdman")
@@ -34,10 +23,30 @@ library(rvest)
 library(xml2)
 
 
+# Settings ----
+
+next_url <- "https://jrosell.github.io/AdventOfCode/2022/01.html"
+include_path <- "https://jrosell.github.io/AdventOfCode/"
+internal_urls_queque <- tibble(href = character(0))
+crawl_internal_links <- TRUE
+
+# urls <- read_csv(here::here("data" , "urls.csv"))
+# next_url <- urls$urls[[1]]
+# include_path <- next_url
+# internal_urls_queque <- tibble(href = urls %>% pull(urls))
+# crawl_internal_links <- FALSE
+
+exclude_path <- "(error|--)"
+max_crawls <- 5000
+chrome_version <- "110.0.5481.77"
+save_intermediate_results <- FALSE
+sleep_sample <- seq(0.01, 0.5, 0.01)
+
+
+
 # Execution ----
 
 source("R/rselenium.R")
-pending_internal_urls <- tibble(href = character(0))
 crawled <- tibble(href = character(0), source = list())
 pending <- 1
 if (exists("chrome_driver")) chrome_driver$stop()
@@ -50,8 +59,8 @@ extra_capabilities <- list(chromeOptions = list(args = c(
   "--window-size=1280,800"
 )))
 remote_driver <- remoteDriver(
-    browserName = "chrome", 
-    port = 4567L, 
+    browserName = "chrome",
+    port = 4567L,
     extraCapabilities = extra_capabilities
 )
 remote_driver$open()
@@ -72,24 +81,28 @@ for (i in 1:max_crawls) {
     crawled %>% write_rds(here::here("data/crawled.rds"))
   }
 
-  new_internal_urls <-
-    tibble(
-      href = c(next_url, extract_links(remote_driver))
-    ) %>%
-    filter(str_detect(href, include_path)) %>%
-    mutate(href = str_replace(href, "#.*", ""))
+  if (crawl_internal_links) {
+    new_internal_urls <-
+      tibble(
+        href = c(next_url, extract_links(remote_driver))
+      ) %>%
+      filter(str_detect(href, include_path)) %>%
+      mutate(href = str_replace(href, "#.*", ""))
+  } else {
+    new_internal_urls <- tibble(href = character(0))
+  }
 
-  pending_internal_urls <- 
-    bind_rows(pending_internal_urls, new_internal_urls) %>%
+  internal_urls_queque <-
+    bind_rows(internal_urls_queque, new_internal_urls) %>%
     unique() %>%
     filter(!str_detect(href, exclude_path)) %>%
     anti_join(crawled, by = "href") %>%
     arrange(str_length(href))
 
-  pending <- nrow(pending_internal_urls)
+  pending <- nrow(internal_urls_queque)
   if (pending == 0) break
 
-  next_url <- pending_internal_urls[[1]][[1]]
+  next_url <- internal_urls_queque[[1]][[1]]
 
   Sys.sleep(sample(sleep_sample, 1))
 }
