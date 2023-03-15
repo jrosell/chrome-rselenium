@@ -18,7 +18,7 @@ You can crawl available CRAN packages using Selenium on Ubuntu (should work also
 
 3.  Run crawler-cran.R (\~5h)
 
-4.  Check the results in the data folder (You can check 2023-03-15 results [here](https://github.com/jrosell/chrome-rselenium/blob/master/data/crawl_cran_parsed.csv))
+4.  Check the results in the data folder (You can check 2023-03-15 results [here](https://raw.githubusercontent.com/jrosell/chrome-rselenium/master/data/crawl_cran_parsed.csv))
 
 ### Use RSelenium as a website crawler (older example)
 
