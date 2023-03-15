@@ -14,8 +14,7 @@ You can crawl available CRAN packages using Selenium on Ubuntu (should work also
     git clone https://github.com/jrosell/chrome-rselenium myproject
     cd myproject
 ```
-
-2. Install Rstudio for R from <https://rstudio.com/products/rstudio/>
+2.  Install Rstudio for R from <https://rstudio.com/products/rstudio/>
 
 3.  Run crawler-cran.R (\~5h)
 
@@ -31,7 +30,6 @@ You can crawl a website using selenium on Ubuntu (should work also in other Linu
     git clone https://github.com/jrosell/chrome-rselenium myproject
     cd myproject
 ```
-
 2.  Install Rstudio for R from <https://rstudio.com/products/rstudio/>
 
 3.  Edit crawler.R. Change next_url, include_path, exclude_path and max_crawls, chrome_version, save_intermediate_results and sleep_sample as required.
@@ -48,7 +46,6 @@ You can use selenium on Ubuntu (should work also in other Linux/Windows/Mac) wit
     git clone https://github.com/jrosell/chrome-rselenium myproject
     cd myproject
 ```
-
 2.  Install Rstudio for R from <https://rstudio.com/products/rstudio/>
 
 3.  Place chromedriver file in your "User/Documents/R" folder If you need to update current chromedriver, download it from <https://sites.google.com/a/chromium.org/chromedriver/downloads> and extract it there.
