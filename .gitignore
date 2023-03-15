@@ -3,5 +3,4 @@
 .RData
 .Ruserdata
 data/*
-!data/crawl_cran.rds
 !data/crawl_cran_parsed.csv

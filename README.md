@@ -11,12 +11,11 @@ You can crawl available CRAN packages using Selenium on Ubuntu (should work also
 1.  Clone the project (change myproject to whatever your want)
 
 ```{=html}
-<!-- -->
-```
     git clone https://github.com/jrosell/chrome-rselenium myproject
     cd myproject
+```
 
-2.  Install Rstudio for R from <https://rstudio.com/products/rstudio/>
+2. Install Rstudio for R from <https://rstudio.com/products/rstudio/>
 
 3.  Run crawler-cran.R (\~5h)
 
@@ -29,10 +28,9 @@ You can crawl a website using selenium on Ubuntu (should work also in other Linu
 1.  Clone the project (change myproject to whatever your want)
 
 ```{=html}
-<!-- -->
-```
     git clone https://github.com/jrosell/chrome-rselenium myproject
     cd myproject
+```
 
 2.  Install Rstudio for R from <https://rstudio.com/products/rstudio/>
 
@@ -47,10 +45,9 @@ You can use selenium on Ubuntu (should work also in other Linux/Windows/Mac) wit
 1.  Clone the project (change myproject to whatever your want)
 
 ```{=html}
-<!-- -->
-```
     git clone https://github.com/jrosell/chrome-rselenium myproject
     cd myproject
+```
 
 2.  Install Rstudio for R from <https://rstudio.com/products/rstudio/>
 
